@@ -2,19 +2,33 @@
 # Created by Kelly Mistry, kelly.r.mistry@gmail.com
 # Last revised: 6/11/2019
 
-stock_csv <- read.csv("stock.csv")
+library(here)
 
-timeseries <- read.csv("timeseries.csv")
+stock_csv <- read.csv(here::here("/Data/RAM Files (v4.44)/ram tables/stock.csv"))
 
-indices <- c(grep("Australia Rock Lobster", temp$stocklong), grep("Australia Rock Lobster", temp$stocklong))
+timeseries <- read.csv(here::here("/Data/RAM Files (v4.44)/ram tables/timeseries.csv"))
+
+indices <- c(grep("Igushik", stock_csv$stocklong), 
+             grep("Nushagak", stock_csv$stocklong),
+             grep("Togiak", stock_csv$stocklong),
+             grep("Kvichak", stock_csv$stocklong),
+             grep("Naknek", stock_csv$stocklong),
+             grep("Egegik", stock_csv$stocklong),
+             grep("Ugashik", stock_csv$stocklong),
+             grep("Wood", stock_csv$stocklong))
 
 stockid_of_interest <- c("COD2J3KL", "SARDPCOAST", "PANCHPERUNC", "PHALNPAC", 
-                         "HERRNORSS", "WPOLLEBS", "PILCHPJPN", "ATBTUNAEATL")
+                         "HERRNORSS", "WPOLLEBS", "PILCHPJPN", "ATBTUNAEATL", 
+                         "CODIIIaW-IV-VIId", "SSALMIGUSHIK", "SSALMNUSHAGAK", 
+                         "SSALMTOGIAK", "SSALMKVICHAK", "SSALMNAKNEK", "SSALMEGEGIK",
+                         "SSALMUGASHIK", "SSALMWOOD")
+stocklong_of_interest <- timeseries$stocklong[match(stockid_of_interest, timeseries$stockid)]
 
 
 classic_stock_timeseries_list <- lapply(stockid_of_interest, function(x) {
   timeseries[timeseries$stockid == x, ]
   })
+names(classic_stock_timeseries_list) <- stocklong_of_interest
 
 summary_data <- lapply(classic_stock_timeseries_list, function(x) {
   number_of_assessments <- length(unique(x$assessid))
@@ -24,10 +38,10 @@ summary_data <- lapply(classic_stock_timeseries_list, function(x) {
               year_min = year_min, year_max = year_max))
 })
 
+names(summary_data) <- stocklong_of_interest
+
 # Unclear stockids:
-# Bristol Bay Sockeye Salmon - check with Mike (may be more than 1 stockid)
 # West Australia Rock Lobster - check with Mike (south australia northern or southern zone)
-# North Sea Cod - centered on subarea IV - check with Mike (CODIIIaW-IV-VIId?)
 
 
 
